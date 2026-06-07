@@ -17,28 +17,14 @@ import net.sherfy.crystal_leveling.init.CrystalLevelingModAttributes;
 import net.sherfy.crystaldrops.CrystalDropsMod;
 import net.sherfy.crystaldrops.compat.ModCompatibility;
 
-/**
- * Handles two visual/combat mechanics for high-difficulty mobs:
- *
- *  FRENZY: mobs with difficulty >= 80 gain Strength II + optional Speed
- *          when their health drops below 50% for the first time.
- *
- *          Compatibility note: if Dangerous Forge is loaded, Speed is skipped
- *          for Creepers and Spiders because that mod already boosts their
- *          movement via attribute modifiers — stacking both would overshoot
- *          the 75% combined difficulty target.
- *
- *  PARTICLES: mobs with difficulty >= 80 emit LAVA + SOUL_FIRE_FLAME
- *             particles every 10 ticks as a danger indicator.
- */
 @Mod.EventBusSubscriber(modid = CrystalDropsMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class FrenzyHandler {
 
-    private static final int    FRENZY_DURATION    = 400;  // 20 seconds
-    private static final int    FRENZY_AMPLIFIER   = 1;    // Speed II / Strength II (0-indexed)
+    private static final int    FRENZY_DURATION    = 400;
+    private static final int    FRENZY_AMPLIFIER   = 1;
     private static final double FRENZY_THRESHOLD   = 80.0;
     private static final double FRENZY_HP_PCT      = 0.5;
-    private static final int    PARTICLE_INTERVAL  = 10;   // ticks
+    private static final int    PARTICLE_INTERVAL  = 10;
 
     // ── Frenzy trigger ─────────────────────────────────────────────────────
 
@@ -53,23 +39,17 @@ public class FrenzyHandler {
         double difficulty = getDifficulty(entity);
         if (difficulty < FRENZY_THRESHOLD) return;
 
-        // Frenzy fires only the first time health crosses below 50%
         float healthAfter = entity.getHealth() - event.getAmount();
         float halfMax     = entity.getMaxHealth() * (float) FRENZY_HP_PCT;
 
         boolean crossingThreshold = entity.getHealth() >= halfMax && healthAfter < halfMax;
         if (!crossingThreshold) return;
 
-        // Guard: don't re-apply if already in frenzy
         boolean alreadyFrenzied =
             entity.hasEffect(MobEffects.MOVEMENT_SPEED) &&
             entity.getEffect(MobEffects.MOVEMENT_SPEED).getAmplifier() >= FRENZY_AMPLIFIER;
         if (alreadyFrenzied) return;
 
-        // ── Compatibility with Dangerous Forge ───────────────────────────
-        // Dangerous already boosts Creeper and Spider speed via attributes.
-        // Applying Speed II on top would exceed the 75% difficulty target,
-        // so we skip Speed for those mob types and only apply Strength.
         if (!ModCompatibility.shouldSkipSpeedFor(entity)) {
             entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
                 FRENZY_DURATION, FRENZY_AMPLIFIER, false, true));
@@ -80,13 +60,11 @@ public class FrenzyHandler {
         entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
             FRENZY_DURATION, 0, false, true));
 
-        CrystalDropsMod.LOGGER.debug("[Frenzy] {} (difficulty={}) entered frenzy! dangerousCompat={}",
-            entity.getName().getString(),
-            String.format("%.1f", difficulty),
-            ModCompatibility.DANGEROUS_LOADED);
+        CrystalDropsMod.LOGGER.debug("[Frenzy] {} (difficulty={}) entered frenzy!",
+            entity.getName().getString(), String.format("%.1f", difficulty));
     }
 
-    // ── Angry villager particles on hit (LEGENDARY only) ──────────────────
+    // ── Angry villager particles on hit (LEGENDARY only) ─────────────────
 
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
@@ -96,22 +74,19 @@ public class FrenzyHandler {
         if (entity.level().isClientSide()) return;
 
         double difficulty = getDifficulty(entity);
-        if (difficulty < 81) return; // only LEGENDARY
+        if (difficulty < 81) return;
 
         ServerLevel serverLevel = (ServerLevel) entity.level();
         double cx = entity.getX();
         double cy = entity.getY() + entity.getBbHeight();
         double cz = entity.getZ();
 
-        // Angry villager particles burst above the mob's head on each hit
         serverLevel.sendParticles(ParticleTypes.ANGRY_VILLAGER,
             cx, cy + 0.3, cz,
-            6,           // count
-            0.3, 0.2, 0.3, // spread
-            0.0);
+            6, 0.3, 0.2, 0.3, 0.0);
     }
 
-    // ── Particle aura ──────────────────────────────────────────────────────
+    // ── Particle aura ───────────────────────────────────────────────────────
 
     @SubscribeEvent
     public static void onLivingTick(LivingEvent.LivingTickEvent event) {
