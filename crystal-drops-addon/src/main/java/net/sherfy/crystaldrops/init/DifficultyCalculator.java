@@ -6,6 +6,7 @@ import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.Level;
+import net.sherfy.crystaldrops.compat.ModCompatibility;
 
 import java.util.Random;
 
@@ -13,54 +14,68 @@ import java.util.Random;
  * Calculates difficulty_level for entities using exponential decay sampling.
  *
  * A candidate level is drawn uniformly from [0, 100] and accepted with
- * probability P = e^(-level / lambda). Lower levels are accepted far more
- * often; high levels are possible but increasingly rare.
+ * probability P = e^(-level / lambda). Lower levels are far more common;
+ * high levels are possible but increasingly rare.
  *
- * Lambda values per dimension shift the "steepness" of the curve:
- *   Overworld : lambda = 20  → level 60 is ~5% as likely as level 0
- *   Nether    : lambda = 35  → flatter curve, harder mobs more common
- *   End       : lambda = 50  → even flatter, high levels fairly common
+ * ── Calibration (target: 75 / 100 combined with Dangerous Forge) ──────────
  *
- * Distance from world spawn shifts an additional multiplier on top,
- * making deep exploration genuinely dangerous.
+ * Dangerous Forge contributes ~45% via health scaling, mob gear, creeper/spider
+ * attribute buffs, and skeleton weapon-swapping.
+ * Crystal Drops targets ~30% via difficulty distribution and frenzy.
  *
- * Passive mobs (animals) are hard-capped at 30.
+ * When Dangerous Forge is NOT loaded, lambda values are raised so Crystal Drops
+ * alone sits around 55-60% (playable solo).
+ *
+ * Lambda reference:
+ *   Smaller lambda → steeper decay → fewer hard mobs (easier)
+ *   Larger  lambda → flatter decay → more hard mobs  (harder)
+ *
+ *               With Dangerous   Without Dangerous
+ *   Overworld:       18               24
+ *   Nether:          28               38
+ *   End:             38               52
+ *
+ * Passive mobs (animals) are hard-capped at 30 regardless.
  */
 public class DifficultyCalculator {
 
     private static final Random RNG = new Random();
 
-    // Exponential decay lambda per dimension (higher = flatter / harder)
-    private static final double OVERWORLD_LAMBDA = 20.0;
-    private static final double NETHER_LAMBDA    = 35.0;
-    private static final double END_LAMBDA       = 50.0;
+    // Lambda with Dangerous Forge (softer — combined target ~75%)
+    private static final double OVERWORLD_LAMBDA_COMPAT = 18.0;
+    private static final double NETHER_LAMBDA_COMPAT    = 28.0;
+    private static final double END_LAMBDA_COMPAT       = 38.0;
 
-    // Max attempts before giving up and returning 0 (avoids infinite loop)
-    private static final int MAX_ATTEMPTS = 200;
+    // Lambda without Dangerous Forge (harder — solo target ~55%)
+    private static final double OVERWORLD_LAMBDA_SOLO   = 24.0;
+    private static final double NETHER_LAMBDA_SOLO      = 38.0;
+    private static final double END_LAMBDA_SOLO         = 52.0;
 
-    // Difficulty bonus per 500 blocks from world spawn (overworld only)
-    // Implemented as a reduction to lambda (flatter curve = harder mobs)
-    private static final double DISTANCE_LAMBDA_REDUCTION_PER_500 = 2.5;
+    // Overworld distance scaling: every 500 blocks reduces lambda (more hard mobs)
+    private static final double DISTANCE_LAMBDA_REDUCTION_PER_500 = 2.0;
     private static final double MIN_OVERWORLD_LAMBDA               = 10.0;
 
     private static final double PASSIVE_MOB_CAP = 30.0;
+    private static final int    MAX_ATTEMPTS    = 200;
 
     /**
-     * Rolls a difficulty level for the given entity based on its position and dimension.
+     * Rolls a difficulty level for the given entity based on its position,
+     * dimension, and which companion mods are loaded.
      * Returns a value in [0, 100] with exponential probability decay.
      */
     public static double roll(LivingEntity entity) {
         ResourceKey<Level> dim = entity.level().dimension();
-        double lambda;
+        boolean withDangerous  = ModCompatibility.DANGEROUS_LOADED;
 
+        double lambda;
         if (dim.equals(Level.NETHER)) {
-            lambda = NETHER_LAMBDA;
+            lambda = withDangerous ? NETHER_LAMBDA_COMPAT : NETHER_LAMBDA_SOLO;
         } else if (dim.equals(Level.END)) {
-            lambda = END_LAMBDA;
+            lambda = withDangerous ? END_LAMBDA_COMPAT : END_LAMBDA_SOLO;
         } else {
-            // Overworld: the further from spawn, the flatter the curve (more hard mobs)
+            double base      = withDangerous ? OVERWORLD_LAMBDA_COMPAT : OVERWORLD_LAMBDA_SOLO;
             double reduction = distanceLambdaReduction(entity);
-            lambda = Math.max(OVERWORLD_LAMBDA - reduction, MIN_OVERWORLD_LAMBDA);
+            lambda           = Math.max(base - reduction, MIN_OVERWORLD_LAMBDA);
         }
 
         double level = exponentialSample(lambda);
@@ -76,25 +91,24 @@ public class DifficultyCalculator {
 
     /**
      * Rejection sampling: draw uniform [0,100], accept with P = e^(-x/lambda).
-     * This produces a true exponential distribution over [0, 100].
+     * Produces a true exponential distribution over [0, 100].
      */
     private static double exponentialSample(double lambda) {
         for (int i = 0; i < MAX_ATTEMPTS; i++) {
-            double candidate = RNG.nextDouble() * 100.0;          // uniform [0, 100]
-            double acceptance = Math.exp(-candidate / lambda);     // e^(-x/lambda) in [0,1]
+            double candidate  = RNG.nextDouble() * 100.0;
+            double acceptance = Math.exp(-candidate / lambda);
             if (RNG.nextDouble() < acceptance) {
                 return candidate;
             }
         }
-        // Fallback: return a low value (extremely unlikely to reach here)
-        return RNG.nextDouble() * 10.0;
+        return RNG.nextDouble() * 10.0; // near-impossible fallback
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────
 
     private static double distanceLambdaReduction(LivingEntity entity) {
-        BlockPos pos = entity.blockPosition();
-        double dist = Math.sqrt(pos.getX() * (double) pos.getX() + pos.getZ() * (double) pos.getZ());
+        BlockPos pos  = entity.blockPosition();
+        double dist   = Math.sqrt(pos.getX() * (double) pos.getX() + pos.getZ() * (double) pos.getZ());
         return (dist / 500.0) * DISTANCE_LAMBDA_REDUCTION_PER_500;
     }
 
