@@ -1,0 +1,15 @@
+{
+  "itemGroup.guillotina_granizados": "Guillotina Granizados",
+
+  "block.guillotina_granizados.guillotina": "La Guillotina",
+
+  "item.guillotina_granizados.granizado_quipitos":            "Granizado Quipitos",
+  "item.guillotina_granizados.granizado_revolcon":            "Granizado Revolcón",
+  "item.guillotina_granizados.granizado_sminorff_tamarindo":  "Sminorff de Tamarindo",
+  "item.guillotina_granizados.granizado_bombon":              "Granizado Bombón",
+
+  "item.guillotina_granizados.mezcla_quipitos":  "Mezcla Quipitos",
+  "item.guillotina_granizados.mezcla_revolcon":  "Mezcla Revolcón",
+  "item.guillotina_granizados.tamarindo":        "Tamarindo",
+  "item.guillotina_granizados.mezcla_bombon":    "Mezcla Bombón"
+}

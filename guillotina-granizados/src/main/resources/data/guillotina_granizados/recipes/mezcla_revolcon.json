@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:apple" },
+    { "item": "minecraft:melon_slice" },
+    { "item": "minecraft:sugar" }
+  ],
+  "result": { "item": "guillotina_granizados:mezcla_revolcon", "count": 3 }
+}

@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "guillotina_granizados:block/guillotina" }
+  }
+}
