@@ -19,30 +19,18 @@ import java.util.concurrent.ConcurrentHashMap;
  *   1. Block destruction is cancelled entirely.
  *   2. Only Monster entities receive damage.
  *   3. Players (including the invoker) are immune.
+ *
+ * We only use ExplosionEvent.Detonate — cancelling Start also cancels
+ * entity damage, so we let the explosion run normally and intercept
+ * at Detonate to strip blocks and filter entities.
  */
 @Mod.EventBusSubscriber(modid = CrystalDropsMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ScrollTntHandler {
 
-    // Maps scroll TNT UUID → invoker player UUID
     private static final Map<UUID, UUID> SCROLL_TNTS = new ConcurrentHashMap<>();
 
-    /** Called by SummonScrollItem when spawning each TNT. */
     public static void registerScrollTnt(UUID tntId, UUID invokerId) {
         SCROLL_TNTS.put(tntId, invokerId);
-    }
-
-    @SubscribeEvent
-    public static void onExplosionStart(ExplosionEvent.Start event) {
-        Explosion explosion = event.getExplosion();
-        Entity source = explosion.getDirectSourceEntity();
-        if (!(source instanceof PrimedTnt tnt)) return;
-        if (!SCROLL_TNTS.containsKey(tnt.getUUID())) return;
-
-        // Cancel the default block-breaking calculation entirely
-        event.setCanceled(true);
-
-        // Manually apply entity damage phase (no block damage)
-        explosion.finalizeExplosion(false);
     }
 
     @SubscribeEvent
@@ -54,12 +42,14 @@ public class ScrollTntHandler {
 
         SCROLL_TNTS.remove(tnt.getUUID());
 
-        // Rule 1: no blocks destroyed
+        // No block destruction
         event.getAffectedBlocks().clear();
 
-        // Rule 2 & 3: only non-player monsters take damage
+        // Only non-player monsters take damage
         event.getAffectedEntities().removeIf(entity ->
             !(entity instanceof Monster) || entity instanceof Player
         );
+
+        CrystalDropsMod.LOGGER.debug("[AirStrike] Explosion filtered — monsters only, no blocks");
     }
 }
