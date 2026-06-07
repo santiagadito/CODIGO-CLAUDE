@@ -10,8 +10,19 @@ import net.minecraft.world.level.Level;
 import java.util.Random;
 
 /**
- * Calculates difficulty_level for entities using a Gaussian distribution
- * biased toward low values. Level scales with world distance and dimension.
+ * Calculates difficulty_level for entities using exponential decay sampling.
+ *
+ * A candidate level is drawn uniformly from [0, 100] and accepted with
+ * probability P = e^(-level / lambda). Lower levels are accepted far more
+ * often; high levels are possible but increasingly rare.
+ *
+ * Lambda values per dimension shift the "steepness" of the curve:
+ *   Overworld : lambda = 20  → level 60 is ~5% as likely as level 0
+ *   Nether    : lambda = 35  → flatter curve, harder mobs more common
+ *   End       : lambda = 50  → even flatter, high levels fairly common
+ *
+ * Distance from world spawn shifts an additional multiplier on top,
+ * making deep exploration genuinely dangerous.
  *
  * Passive mobs (animals) are hard-capped at 30.
  */
@@ -19,47 +30,41 @@ public class DifficultyCalculator {
 
     private static final Random RNG = new Random();
 
-    // Baseline Gaussian parameters per dimension
-    private static final double OVERWORLD_MEAN   = 12.0;
-    private static final double OVERWORLD_STDDEV  = 14.0;
-    private static final double NETHER_MEAN      = 42.0;
-    private static final double NETHER_STDDEV    = 18.0;
-    private static final double END_MEAN         = 62.0;
-    private static final double END_STDDEV       = 16.0;
+    // Exponential decay lambda per dimension (higher = flatter / harder)
+    private static final double OVERWORLD_LAMBDA = 20.0;
+    private static final double NETHER_LAMBDA    = 35.0;
+    private static final double END_LAMBDA       = 50.0;
+
+    // Max attempts before giving up and returning 0 (avoids infinite loop)
+    private static final int MAX_ATTEMPTS = 200;
 
     // Difficulty bonus per 500 blocks from world spawn (overworld only)
-    private static final double DISTANCE_BONUS_PER_500 = 5.0;
-    private static final double MAX_DISTANCE_BONUS      = 30.0;
+    // Implemented as a reduction to lambda (flatter curve = harder mobs)
+    private static final double DISTANCE_LAMBDA_REDUCTION_PER_500 = 2.5;
+    private static final double MIN_OVERWORLD_LAMBDA               = 10.0;
 
     private static final double PASSIVE_MOB_CAP = 30.0;
 
     /**
      * Rolls a difficulty level for the given entity based on its position and dimension.
-     * Returns a value clamped to [0, 100].
+     * Returns a value in [0, 100] with exponential probability decay.
      */
     public static double roll(LivingEntity entity) {
         ResourceKey<Level> dim = entity.level().dimension();
-        double mean;
-        double stddev;
+        double lambda;
 
         if (dim.equals(Level.NETHER)) {
-            mean   = NETHER_MEAN;
-            stddev = NETHER_STDDEV;
+            lambda = NETHER_LAMBDA;
         } else if (dim.equals(Level.END)) {
-            mean   = END_MEAN;
-            stddev = END_STDDEV;
+            lambda = END_LAMBDA;
         } else {
-            // Overworld: scale mean with horizontal distance from spawn
-            double distanceBonus = distanceBonus(entity);
-            mean   = OVERWORLD_MEAN + distanceBonus;
-            stddev = OVERWORLD_STDDEV;
+            // Overworld: the further from spawn, the flatter the curve (more hard mobs)
+            double reduction = distanceLambdaReduction(entity);
+            lambda = Math.max(OVERWORLD_LAMBDA - reduction, MIN_OVERWORLD_LAMBDA);
         }
 
-        // Box-Muller Gaussian sample
-        double raw = gaussianSample(mean, stddev);
-        double level = clamp(raw, 0, 100);
+        double level = exponentialSample(lambda);
 
-        // Passive mob cap
         if (isPassive(entity)) {
             level = Math.min(level, PASSIVE_MOB_CAP);
         }
@@ -67,25 +72,34 @@ public class DifficultyCalculator {
         return level;
     }
 
+    // ── Core sampling ──────────────────────────────────────────────────────
+
+    /**
+     * Rejection sampling: draw uniform [0,100], accept with P = e^(-x/lambda).
+     * This produces a true exponential distribution over [0, 100].
+     */
+    private static double exponentialSample(double lambda) {
+        for (int i = 0; i < MAX_ATTEMPTS; i++) {
+            double candidate = RNG.nextDouble() * 100.0;          // uniform [0, 100]
+            double acceptance = Math.exp(-candidate / lambda);     // e^(-x/lambda) in [0,1]
+            if (RNG.nextDouble() < acceptance) {
+                return candidate;
+            }
+        }
+        // Fallback: return a low value (extremely unlikely to reach here)
+        return RNG.nextDouble() * 10.0;
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────
 
-    private static double distanceBonus(LivingEntity entity) {
+    private static double distanceLambdaReduction(LivingEntity entity) {
         BlockPos pos = entity.blockPosition();
         double dist = Math.sqrt(pos.getX() * (double) pos.getX() + pos.getZ() * (double) pos.getZ());
-        double bonus = (dist / 500.0) * DISTANCE_BONUS_PER_500;
-        return Math.min(bonus, MAX_DISTANCE_BONUS);
+        return (dist / 500.0) * DISTANCE_LAMBDA_REDUCTION_PER_500;
     }
 
     private static boolean isPassive(LivingEntity entity) {
         return entity instanceof Animal || entity instanceof AgeableMob;
-    }
-
-    private static double gaussianSample(double mean, double stddev) {
-        return mean + RNG.nextGaussian() * stddev;
-    }
-
-    private static double clamp(double val, double min, double max) {
-        return Math.max(min, Math.min(max, val));
     }
 
     /**
