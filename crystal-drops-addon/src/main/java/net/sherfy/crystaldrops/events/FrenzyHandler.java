@@ -9,6 +9,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -83,6 +84,31 @@ public class FrenzyHandler {
             entity.getName().getString(),
             String.format("%.1f", difficulty),
             ModCompatibility.DANGEROUS_LOADED);
+    }
+
+    // ── Angry villager particles on hit (LEGENDARY only) ──────────────────
+
+    @SubscribeEvent
+    public static void onLivingHurt(LivingHurtEvent event) {
+        LivingEntity entity = event.getEntity();
+
+        if (entity instanceof Player) return;
+        if (entity.level().isClientSide()) return;
+
+        double difficulty = getDifficulty(entity);
+        if (difficulty < 81) return; // only LEGENDARY
+
+        ServerLevel serverLevel = (ServerLevel) entity.level();
+        double cx = entity.getX();
+        double cy = entity.getY() + entity.getBbHeight();
+        double cz = entity.getZ();
+
+        // Angry villager particles burst above the mob's head on each hit
+        serverLevel.sendParticles(ParticleTypes.ANGRY_VILLAGER,
+            cx, cy + 0.3, cz,
+            6,           // count
+            0.3, 0.2, 0.3, // spread
+            0.0);
     }
 
     // ── Particle aura ──────────────────────────────────────────────────────

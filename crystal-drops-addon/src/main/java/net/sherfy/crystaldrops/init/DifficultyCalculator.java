@@ -31,8 +31,12 @@ import java.util.Random;
  *   Larger  lambda → flatter decay → more hard mobs  (harder)
  *
  *               With Dangerous   Without Dangerous
- *   Overworld:       18               24
- *   Nether:          28               38
+ *   Overworld:       10               14
+ *   Nether:          16               22
+ *   End:             22               30
+ *
+ * At lambda=10: level 50 is accepted only e^(-5) ≈ 0.7% of the time.
+ * LEGENDARY (81+) mobs become genuinely rare encounters.
  *   End:             38               52
  *
  * Passive mobs (animals) are hard-capped at 30 regardless.
@@ -41,15 +45,15 @@ public class DifficultyCalculator {
 
     private static final Random RNG = new Random();
 
-    // Lambda with Dangerous Forge (softer — combined target ~75%)
-    private static final double OVERWORLD_LAMBDA_COMPAT = 18.0;
-    private static final double NETHER_LAMBDA_COMPAT    = 28.0;
-    private static final double END_LAMBDA_COMPAT       = 38.0;
+    // Lambda with Dangerous Forge — very steep, high levels extremely rare
+    private static final double OVERWORLD_LAMBDA_COMPAT = 10.0;
+    private static final double NETHER_LAMBDA_COMPAT    = 16.0;
+    private static final double END_LAMBDA_COMPAT       = 22.0;
 
-    // Lambda without Dangerous Forge (harder — solo target ~55%)
-    private static final double OVERWORLD_LAMBDA_SOLO   = 24.0;
-    private static final double NETHER_LAMBDA_SOLO      = 38.0;
-    private static final double END_LAMBDA_SOLO         = 52.0;
+    // Lambda without Dangerous Forge — steep but slightly more lenient
+    private static final double OVERWORLD_LAMBDA_SOLO   = 14.0;
+    private static final double NETHER_LAMBDA_SOLO      = 22.0;
+    private static final double END_LAMBDA_SOLO         = 30.0;
 
     // Overworld distance scaling: every 500 blocks reduces lambda (more hard mobs)
     private static final double DISTANCE_LAMBDA_REDUCTION_PER_500 = 2.0;
