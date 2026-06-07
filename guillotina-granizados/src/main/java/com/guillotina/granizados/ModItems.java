@@ -1,6 +1,7 @@
 package com.guillotina.granizados;
 
 import com.guillotina.granizados.item.GranizadoItem;
+import com.guillotina.granizados.item.IngredienteItem;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
@@ -12,19 +13,20 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, GranizadosMod.MOD_ID);
 
-    // ── Ingredientes (se craftean en mesa normal) ──────────────────────────
+    // ── Ingredientes ──────────────────────────────────────────────────────
+    // Colores: rosa-morado / verde / rojo / rosado
 
-    public static final RegistryObject<Item> MEZCLA_QUIPITOS = ITEMS.register("mezcla_quipitos",
-            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<IngredienteItem> MEZCLA_QUIPITOS = ITEMS.register("mezcla_quipitos",
+            () -> new IngredienteItem(new Item.Properties(), 0xC040E0));
 
-    public static final RegistryObject<Item> MEZCLA_REVOLCON = ITEMS.register("mezcla_revolcon",
-            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<IngredienteItem> MEZCLA_REVOLCON = ITEMS.register("mezcla_revolcon",
+            () -> new IngredienteItem(new Item.Properties(), 0x28AA3C));
 
-    public static final RegistryObject<Item> TAMARINDO = ITEMS.register("tamarindo",
-            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<IngredienteItem> TAMARINDO = ITEMS.register("tamarindo",
+            () -> new IngredienteItem(new Item.Properties(), 0xD22323));
 
-    public static final RegistryObject<Item> MEZCLA_BOMBON = ITEMS.register("mezcla_bombon",
-            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<IngredienteItem> MEZCLA_BOMBON = ITEMS.register("mezcla_bombon",
+            () -> new IngredienteItem(new Item.Properties(), 0xF05AA0));
 
     // ── Granizados (se hacen en la Guillotina) ─────────────────────────────
 
