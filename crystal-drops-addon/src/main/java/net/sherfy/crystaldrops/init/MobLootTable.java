@@ -226,15 +226,15 @@ public class MobLootTable {
     /**
      * Mobs with difficulty >= 60 have a linearly scaling chance to drop Summon Scrolls.
      *
-     * Probability : 5% at level 60 → 25% at level 100  (linear)
+     * Probability : 15% at level 60 → 35% at level 100  (linear, +10% base)
      * Quantity    : 1 scroll at level 60 → 3 scrolls at level 100 (scaled)
      */
     public static List<ItemStack> getSummonScrollDrops(double difficulty) {
         List<ItemStack> drops = new ArrayList<>();
         if (difficulty < 60) return drops;
 
-        // probability: 0.05 + 0.20 * ((difficulty - 60) / 40)
-        double chance = 0.05 + 0.20 * ((difficulty - 60.0) / 40.0);
+        // probability: 0.15 + 0.20 * ((difficulty - 60) / 40)
+        double chance = 0.15 + 0.20 * ((difficulty - 60.0) / 40.0);
         if (RNG.nextDouble() >= chance) return drops;
 
         // quantity: 1 at 60, 3 at 100
