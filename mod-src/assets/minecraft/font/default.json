@@ -1,0 +1,18 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/entity_lvl.png",
+      "height": 9,
+      "ascent": 8,
+      "chars": ["🜄"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/entity_lvl_max.png",
+      "height": 9,
+      "ascent": 8,
+      "chars": ["🜅"]
+    }
+  ]
+}

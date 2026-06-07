@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="crystal_leveling"
+version="1.0"
+displayName="Crystal Leveling"
+logoFile="logo.png"
+authors="Sherfy"
+description="Adds random difficulty level to every entity."
+
+# Start of user code block mod configuration
+# End of user code block mod configuration
+
+[[dependencies.crystal_leveling]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1]"
+    ordering="AFTER"
+    side="BOTH"
+
+
+
+
+# Start of user code block dependencies configuration
+# End of user code block dependencies configuration
