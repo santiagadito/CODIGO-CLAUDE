@@ -1,0 +1,34 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="crystaldrops"
+version="1.0.0"
+displayName="Crystal Drops Addon"
+authors="You"
+description='''
+Addon for Crystal Leveling mod.
+Enemies with higher difficulty_level drop better loot on death.
+'''
+
+[[dependencies.crystaldrops]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.crystaldrops]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1]"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.crystaldrops]]
+    modId="crystal_leveling"
+    mandatory=true
+    versionRange="[1.0,)"
+    ordering="AFTER"
+    side="BOTH"
