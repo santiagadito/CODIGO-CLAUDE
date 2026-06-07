@@ -39,7 +39,7 @@ public class MobLootTable {
         } else if (entity instanceof Blaze || entity instanceof MagmaCube || entity instanceof Ghast
                 || entity instanceof Piglin || entity instanceof PiglinBrute) {
             drops.addAll(netherDrops(entity, difficulty));
-        } else if (entity instanceof Enderman || entity instanceof Shulker || entity instanceof EndermiteEntity) {
+        } else if (entity instanceof EnderMan || entity instanceof Shulker || entity instanceof Endermite) {
             drops.addAll(endDrops(difficulty));
             drops.addAll(zombieDrops(difficulty)); // shared base loot
         } else {
