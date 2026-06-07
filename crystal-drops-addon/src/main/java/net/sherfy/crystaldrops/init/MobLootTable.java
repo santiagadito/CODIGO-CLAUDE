@@ -32,16 +32,16 @@ public class MobLootTable {
             drops.addAll(zombieDrops(difficulty));
         } else if (entity instanceof Skeleton || entity instanceof Stray || entity instanceof WitherSkeleton) {
             drops.addAll(skeletonDrops(entity, difficulty));
-            drops.addAll(zombieDrops(difficulty)); // shared base loot
+            drops.addAll(zombieDrops(difficulty));
         } else if (entity instanceof Creeper) {
             drops.addAll(creeperDrops(difficulty));
-            drops.addAll(zombieDrops(difficulty)); // shared base loot
+            drops.addAll(zombieDrops(difficulty));
         } else if (entity instanceof Blaze || entity instanceof MagmaCube || entity instanceof Ghast
                 || entity instanceof Piglin || entity instanceof PiglinBrute) {
             drops.addAll(netherDrops(entity, difficulty));
         } else if (entity instanceof EnderMan || entity instanceof Shulker || entity instanceof Endermite) {
             drops.addAll(endDrops(difficulty));
-            drops.addAll(zombieDrops(difficulty)); // shared base loot
+            drops.addAll(zombieDrops(difficulty));
         } else {
             drops.addAll(genericDrops(difficulty));
         }
@@ -61,54 +61,32 @@ public class MobLootTable {
     }
 
     // ── Zombie family ──────────────────────────────────────────────────────
-    //
-    // COMMON    (17-32): 2-6 iron ingots  OR  5-10 coal
-    // COMMON+   (33-48): 3 emeralds  OR  5 golden carrots
-    // UNCOMMON  (49-64): golden apple  OR  3-10 diamonds
-    // RARE      (65-80): enchanted golden apple  OR  1-2 netherite scraps
-    // LEGENDARY (81-100): 3 enchanted golden apples + netherite ingot
-    //                     + 40% nether star + all lower tiers (maintaining probs)
 
     private static List<ItemStack> zombieDrops(double difficulty) {
         List<ItemStack> drops = new ArrayList<>();
 
         if (difficulty >= 81) {
-            // Guaranteed legendary core
             drops.add(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE, 3));
             drops.add(new ItemStack(Items.NETHERITE_INGOT, 1));
             if (RNG.nextFloat() < 0.40f) drops.add(new ItemStack(Items.NETHER_STAR, 1));
-
-            // All lower tiers also roll (maintaining original probabilities)
-            // RARE tier
             if (RNG.nextBoolean()) drops.add(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE, 1));
             else drops.add(new ItemStack(Items.NETHERITE_SCRAP, RNG.nextInt(2) + 1));
-            // UNCOMMON tier
             if (RNG.nextBoolean()) drops.add(new ItemStack(Items.GOLDEN_APPLE, 1));
             else drops.add(new ItemStack(Items.DIAMOND, RNG.nextInt(8) + 3));
-            // COMMON+ tier
             if (RNG.nextBoolean()) drops.add(new ItemStack(Items.EMERALD, 3));
             else drops.add(new ItemStack(Items.GOLDEN_CARROT, 5));
-            // COMMON tier
             if (RNG.nextBoolean()) drops.add(new ItemStack(Items.IRON_INGOT, RNG.nextInt(5) + 2));
             else drops.add(new ItemStack(Items.COAL, RNG.nextInt(6) + 5));
-
         } else if (difficulty >= 65) {
-            // RARE: enchanted golden apple OR 1-2 netherite scraps
             if (RNG.nextBoolean()) drops.add(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE, 1));
             else drops.add(new ItemStack(Items.NETHERITE_SCRAP, RNG.nextInt(2) + 1));
-
         } else if (difficulty >= 49) {
-            // UNCOMMON: golden apple OR 3-10 diamonds
             if (RNG.nextBoolean()) drops.add(new ItemStack(Items.GOLDEN_APPLE, 1));
             else drops.add(new ItemStack(Items.DIAMOND, RNG.nextInt(8) + 3));
-
         } else if (difficulty >= 33) {
-            // COMMON+: 3 emeralds OR 5 golden carrots
             if (RNG.nextBoolean()) drops.add(new ItemStack(Items.EMERALD, 3));
             else drops.add(new ItemStack(Items.GOLDEN_CARROT, 5));
-
         } else if (difficulty >= 17) {
-            // COMMON: 2-6 iron ingots OR 5-10 coal
             if (RNG.nextBoolean()) drops.add(new ItemStack(Items.IRON_INGOT, RNG.nextInt(5) + 2));
             else drops.add(new ItemStack(Items.COAL, RNG.nextInt(6) + 5));
         }
@@ -117,14 +95,6 @@ public class MobLootTable {
     }
 
     // ── Skeleton family ────────────────────────────────────────────────────
-    //
-    // COMMON    : 1-3 extra arrows
-    // COMMON+   : bones + 50% spectral arrow
-    // UNCOMMON  : slowness arrows x4-8
-    // RARE      : Bow Power III + poison arrows
-    // LEGENDARY : Bow Power V + Infinity + damage arrows
-    // Wither bonus: coal + 70% skull at level 65+
-    // (Also receives zombie drops on top)
 
     private static List<ItemStack> skeletonDrops(LivingEntity entity, double difficulty) {
         List<ItemStack> drops = new ArrayList<>();
@@ -144,7 +114,6 @@ public class MobLootTable {
             drops.add(new ItemStack(Items.ARROW, RNG.nextInt(3) + 1));
         }
 
-        // Wither Skeleton bonus
         if (entity instanceof WitherSkeleton) {
             drops.add(new ItemStack(Items.COAL, RNG.nextInt(3) + 1));
             if (difficulty >= 65 && RNG.nextFloat() < 0.70f) {
@@ -156,13 +125,6 @@ public class MobLootTable {
     }
 
     // ── Creeper ────────────────────────────────────────────────────────────
-    //
-    // COMMON    : 1-5 gunpowder
-    // COMMON+   : 6-10 gunpowder
-    // UNCOMMON  : 50% TNT + 10-15 gunpowder
-    // RARE      : 2 TNT + 15-20 gunpowder
-    // LEGENDARY : head guaranteed + 10 TNT + 64 gunpowder
-    // (Also receives zombie drops on top)
 
     private static List<ItemStack> creeperDrops(double difficulty) {
         List<ItemStack> drops = new ArrayList<>();
@@ -187,12 +149,6 @@ public class MobLootTable {
     }
 
     // ── Nether mobs ────────────────────────────────────────────────────────
-    //
-    // COMMON    (17-32): 4-6 gold ingots + 0.5% nether star
-    // COMMON+   (33-48): 7-15 gold ingots + 1% nether star
-    // UNCOMMON  (49-64): 2 golden apples + 50% enchanted golden apple + 3% nether star
-    // RARE      (65-80): 2 enchanted golden apples + netherite ingot + 30% nether star
-    // LEGENDARY (81-100): nether star + 4 netherite ingots + 5 enchanted golden apples
 
     private static List<ItemStack> netherDrops(LivingEntity entity, double difficulty) {
         List<ItemStack> drops = new ArrayList<>();
