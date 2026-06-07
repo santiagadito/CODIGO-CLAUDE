@@ -26,12 +26,15 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = GranizadosMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEvents {
 
-    private static final List<Item> ALL_INGREDIENTS = List.of(
-            ModItems.MEZCLA_QUIPITOS.get(),
-            ModItems.MEZCLA_REVOLCON.get(),
-            ModItems.TAMARINDO.get(),
-            ModItems.MEZCLA_BOMBON.get()
-    );
+    // Lazy: los RegistryObject.get() solo se llaman cuando ya están registrados
+    private static List<Item> getAllIngredients() {
+        return List.of(
+                ModItems.MEZCLA_QUIPITOS.get(),
+                ModItems.MEZCLA_REVOLCON.get(),
+                ModItems.TAMARINDO.get(),
+                ModItems.MEZCLA_BOMBON.get()
+        );
+    }
 
     private static Method rollMethod     = null;
     private static Method tierNameMethod = null;
@@ -62,7 +65,7 @@ public class ModEvents {
             // ── WEAK / COMMON / COMMON+: 50% → 1 ingrediente aleatorio (x1) ──
             case "WEAK", "COMMON", "COMMON+" -> {
                 if (rng.nextFloat() < 0.50f) {
-                    Item ingredient = pickRandom(ALL_INGREDIENTS, rng);
+                    Item ingredient = pickRandom(getAllIngredients(), rng);
                     spawnDrop(event, entity, ingredient, 1);
                 }
             }
@@ -70,7 +73,7 @@ public class ModEvents {
             // ── UNCOMMON / RARE: 75% → 2 ingredientes distintos (x2 c/u) ─────
             case "UNCOMMON", "RARE" -> {
                 if (rng.nextFloat() < 0.75f) {
-                    List<Item> shuffled = shuffled(ALL_INGREDIENTS, rng);
+                    List<Item> shuffled = shuffled(getAllIngredients(), rng);
                     spawnDrop(event, entity, shuffled.get(0), 2);
                     spawnDrop(event, entity, shuffled.get(1), 2);
                 }
@@ -78,7 +81,7 @@ public class ModEvents {
 
             // ── LEGENDARY: 100% → los 4 ingredientes (x2 c/u) ───────────────
             case "LEGENDARY" -> {
-                for (Item ingredient : ALL_INGREDIENTS) {
+                for (Item ingredient : getAllIngredients()) {
                     spawnDrop(event, entity, ingredient, 2);
                 }
             }
@@ -92,16 +95,16 @@ public class ModEvents {
         switch (tier) {
             case "WEAK", "COMMON", "COMMON+" -> {
                 if (rng.nextFloat() < 0.50f)
-                    result.add(pickRandom(ALL_INGREDIENTS, rng));
+                    result.add(pickRandom(getAllIngredients(), rng));
             }
             case "UNCOMMON", "RARE" -> {
                 if (rng.nextFloat() < 0.75f) {
-                    List<Item> s = shuffled(ALL_INGREDIENTS, rng);
+                    List<Item> s = shuffled(getAllIngredients(), rng);
                     result.add(s.get(0));
                     result.add(s.get(1));
                 }
             }
-            case "LEGENDARY" -> result.addAll(ALL_INGREDIENTS);
+            case "LEGENDARY" -> result.addAll(getAllIngredients());
         }
         return result;
     }

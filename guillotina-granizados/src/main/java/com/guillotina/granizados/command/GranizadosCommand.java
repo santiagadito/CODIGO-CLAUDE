@@ -31,19 +31,24 @@ import java.util.Map;
  */
 public class GranizadosCommand {
 
-    private static final Map<String, Item> GRANIZADOS = Map.of(
-            "quipitos",   ModItems.GRANIZADO_QUIPITOS.get(),
-            "revolcon",   ModItems.GRANIZADO_REVOLCON.get(),
-            "tamarindo",  ModItems.GRANIZADO_SMINORFF_TAMARINDO.get(),
-            "bombon",     ModItems.GRANIZADO_BOMBON.get()
-    );
+    // Lazy: evita llamar .get() antes de que Forge termine el registro
+    private static Map<String, Item> getGranizados() {
+        return Map.of(
+                "quipitos",   ModItems.GRANIZADO_QUIPITOS.get(),
+                "revolcon",   ModItems.GRANIZADO_REVOLCON.get(),
+                "tamarindo",  ModItems.GRANIZADO_SMINORFF_TAMARINDO.get(),
+                "bombon",     ModItems.GRANIZADO_BOMBON.get()
+        );
+    }
 
-    private static final List<Item> INGREDIENTES = List.of(
-            ModItems.MEZCLA_QUIPITOS.get(),
-            ModItems.MEZCLA_REVOLCON.get(),
-            ModItems.TAMARINDO.get(),
-            ModItems.MEZCLA_BOMBON.get()
-    );
+    private static List<Item> getIngredientes() {
+        return List.of(
+                ModItems.MEZCLA_QUIPITOS.get(),
+                ModItems.MEZCLA_REVOLCON.get(),
+                ModItems.TAMARINDO.get(),
+                ModItems.MEZCLA_BOMBON.get()
+        );
+    }
 
     private static final List<String> TIERS = List.of(
             "WEAK", "COMMON", "COMMON+", "UNCOMMON", "RARE", "LEGENDARY"
@@ -58,7 +63,7 @@ public class GranizadosCommand {
                 .then(Commands.literal("give")
                     .then(Commands.argument("nombre", StringArgumentType.word())
                         .suggests((ctx, builder) -> {
-                            GRANIZADOS.keySet().forEach(builder::suggest);
+                            getGranizados().keySet().forEach(builder::suggest);
                             return builder.buildFuture();
                         })
                         .executes(GranizadosCommand::cmdGive)))
@@ -93,12 +98,12 @@ public class GranizadosCommand {
         if (player == null) return 0;
 
         String nombre = StringArgumentType.getString(ctx, "nombre").toLowerCase();
-        Item item = GRANIZADOS.get(nombre);
+        Item item = getGranizados().get(nombre);
 
         if (item == null) {
             ctx.getSource().sendFailure(Component.literal(
                     "§cGranizado desconocido: §e" + nombre +
-                    "\n§7Opciones: " + String.join(", ", GRANIZADOS.keySet())));
+                    "\n§7Opciones: " + String.join(", ", getGranizados().keySet())));
             return 0;
         }
 
@@ -113,7 +118,7 @@ public class GranizadosCommand {
         ServerPlayer player = getPlayer(ctx);
         if (player == null) return 0;
 
-        for (Item ing : INGREDIENTES) {
+        for (Item ing : getIngredientes()) {
             player.getInventory().add(new ItemStack(ing, 3));
         }
         ctx.getSource().sendSuccess(
@@ -126,8 +131,8 @@ public class GranizadosCommand {
         ServerPlayer player = getPlayer(ctx);
         if (player == null) return 0;
 
-        for (Item g : GRANIZADOS.values()) player.getInventory().add(new ItemStack(g, 3));
-        for (Item i : INGREDIENTES)        player.getInventory().add(new ItemStack(i, 3));
+        for (Item g : getGranizados().values()) player.getInventory().add(new ItemStack(g, 3));
+        for (Item i : getIngredientes())        player.getInventory().add(new ItemStack(i, 3));
 
         ctx.getSource().sendSuccess(
                 () -> Component.literal("§aEntregados §etodos§a los granizados e ingredientes §7(x3 cada uno)"),
