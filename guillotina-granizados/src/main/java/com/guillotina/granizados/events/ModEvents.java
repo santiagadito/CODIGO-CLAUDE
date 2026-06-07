@@ -14,7 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -84,6 +83,27 @@ public class ModEvents {
                 }
             }
         }
+    }
+
+    // ── API pública para testeo ───────────────────────────────────────────────
+
+    public static List<Item> simulateDrop(String tier, RandomSource rng) {
+        List<Item> result = new ArrayList<>();
+        switch (tier) {
+            case "WEAK", "COMMON", "COMMON+" -> {
+                if (rng.nextFloat() < 0.50f)
+                    result.add(pickRandom(ALL_INGREDIENTS, rng));
+            }
+            case "UNCOMMON", "RARE" -> {
+                if (rng.nextFloat() < 0.75f) {
+                    List<Item> s = shuffled(ALL_INGREDIENTS, rng);
+                    result.add(s.get(0));
+                    result.add(s.get(1));
+                }
+            }
+            case "LEGENDARY" -> result.addAll(ALL_INGREDIENTS);
+        }
+        return result;
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
