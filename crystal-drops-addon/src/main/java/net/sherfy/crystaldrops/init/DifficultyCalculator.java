@@ -55,8 +55,7 @@ public class DifficultyCalculator {
     private static final double DISTANCE_LAMBDA_REDUCTION_PER_500 = 2.0;
     private static final double MIN_OVERWORLD_LAMBDA               = 10.0;
 
-    private static final double PASSIVE_MOB_CAP = 30.0;
-    private static final int    MAX_ATTEMPTS    = 200;
+    private static final int MAX_ATTEMPTS = 200;
 
     /**
      * Rolls a difficulty level for the given entity based on its position,
@@ -64,6 +63,9 @@ public class DifficultyCalculator {
      * Returns a value in [0, 100] with exponential probability decay.
      */
     public static double roll(LivingEntity entity) {
+        // Passive mobs have no difficulty level
+        if (isPassive(entity)) return 0;
+
         ResourceKey<Level> dim = entity.level().dimension();
         boolean withDangerous  = ModCompatibility.DANGEROUS_LOADED;
 
@@ -78,13 +80,7 @@ public class DifficultyCalculator {
             lambda           = Math.max(base - reduction, MIN_OVERWORLD_LAMBDA);
         }
 
-        double level = exponentialSample(lambda);
-
-        if (isPassive(entity)) {
-            level = Math.min(level, PASSIVE_MOB_CAP);
-        }
-
-        return level;
+        return exponentialSample(lambda);
     }
 
     // ── Core sampling ──────────────────────────────────────────────────────
