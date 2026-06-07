@@ -1,0 +1,46 @@
+name: Build Crystal Drops Addon
+
+on:
+  workflow_dispatch:  # Manual trigger from GitHub UI
+  push:
+    paths:
+      - 'crystal-drops-addon/**'
+    branches:
+      - 'claude/happy-turing-0fm76'
+
+jobs:
+  build:
+    name: Build JAR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Gradle + Forge
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-forge-${{ hashFiles('crystal-drops-addon/build.gradle') }}
+          restore-keys: gradle-forge-
+
+      - name: Build mod
+        working-directory: crystal-drops-addon
+        run: |
+          chmod +x gradlew
+          ./gradlew build --no-daemon
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: crystal-drops-addon-jar
+          path: crystal-drops-addon/build/libs/crystal-drops-addon-*.jar
+          retention-days: 30
