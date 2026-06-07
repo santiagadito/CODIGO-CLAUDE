@@ -41,6 +41,7 @@ public class MobLootTable {
             drops.addAll(netherDrops(entity, difficulty));
         } else if (entity instanceof Enderman || entity instanceof Shulker || entity instanceof EndermiteEntity) {
             drops.addAll(endDrops(difficulty));
+            drops.addAll(zombieDrops(difficulty)); // shared base loot
         } else {
             drops.addAll(genericDrops(difficulty));
         }
