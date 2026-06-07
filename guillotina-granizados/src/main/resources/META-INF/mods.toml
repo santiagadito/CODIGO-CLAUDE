@@ -16,6 +16,13 @@ license="MIT"
     ordering="NONE"
     side="BOTH"
 
+[[dependencies.guillotina_granizados]]
+    modId="crystaldrops"
+    mandatory=false
+    versionRange="[1.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
 [[mods]]
     modId="guillotina_granizados"
     version="1.0.0"
@@ -23,4 +30,5 @@ license="MIT"
     description='''
         Granizados inspirados en Guillotina Granizados de Medellín.
         Tómalos para obtener efectos poderosos... y un poco de náusea.
+        Compatible con CrystalDrops: los mobs de mayor tier sueltan mejores ingredientes.
     '''

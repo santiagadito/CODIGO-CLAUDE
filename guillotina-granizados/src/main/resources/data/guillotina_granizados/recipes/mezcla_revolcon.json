@@ -1,9 +1,9 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    { "item": "minecraft:apple" },
-    { "item": "minecraft:melon_slice" },
-    { "item": "minecraft:sugar" }
-  ],
-  "result": { "item": "guillotina_granizados:mezcla_revolcon", "count": 3 }
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["GGG","GDG","GGG"],
+  "key": {
+    "G": { "item": "minecraft:gold_ingot" },
+    "D": { "item": "minecraft:rotten_flesh" }
+  },
+  "result": { "item": "guillotina_granizados:mezcla_revolcon", "count": 2 }
 }

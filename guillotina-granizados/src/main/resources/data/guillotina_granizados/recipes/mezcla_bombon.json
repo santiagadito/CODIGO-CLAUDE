@@ -1,9 +1,9 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    { "item": "minecraft:cocoa_beans" },
-    { "item": "minecraft:cocoa_beans" },
-    { "item": "minecraft:sugar" }
-  ],
-  "result": { "item": "guillotina_granizados:mezcla_bombon", "count": 3 }
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["GGG","GDG","GGG"],
+  "key": {
+    "G": { "item": "minecraft:gold_ingot" },
+    "D": { "item": "minecraft:ghast_tear" }
+  },
+  "result": { "item": "guillotina_granizados:mezcla_bombon", "count": 2 }
 }

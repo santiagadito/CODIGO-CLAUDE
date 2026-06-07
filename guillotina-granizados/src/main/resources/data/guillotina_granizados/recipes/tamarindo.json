@@ -1,10 +1,9 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    { "item": "minecraft:sweet_berries" },
-    { "item": "minecraft:sweet_berries" },
-    { "item": "minecraft:sugar" },
-    { "item": "minecraft:brown_dye" }
-  ],
-  "result": { "item": "guillotina_granizados:tamarindo", "count": 3 }
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["GGG","GDG","GGG"],
+  "key": {
+    "G": { "item": "minecraft:gold_ingot" },
+    "D": { "item": "minecraft:spider_eye" }
+  },
+  "result": { "item": "guillotina_granizados:tamarindo", "count": 2 }
 }
