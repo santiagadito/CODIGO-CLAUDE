@@ -1,6 +1,12 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube",
   "textures": {
-    "all": "guillotina_granizados:block/guillotina"
+    "down":     "guillotina_granizados:block/guillotina_bottom",
+    "up":       "guillotina_granizados:block/guillotina_top",
+    "north":    "guillotina_granizados:block/guillotina_front",
+    "south":    "guillotina_granizados:block/guillotina_back",
+    "east":     "guillotina_granizados:block/guillotina_side",
+    "west":     "guillotina_granizados:block/guillotina_side",
+    "particle": "guillotina_granizados:block/guillotina_front"
   }
 }

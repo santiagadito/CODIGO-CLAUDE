@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "guillotina_granizados:block/guillotina" }
+    "facing=north": { "model": "guillotina_granizados:block/guillotina" },
+    "facing=south": { "model": "guillotina_granizados:block/guillotina", "y": 180 },
+    "facing=east":  { "model": "guillotina_granizados:block/guillotina", "y": 90  },
+    "facing=west":  { "model": "guillotina_granizados:block/guillotina", "y": 270 }
   }
 }

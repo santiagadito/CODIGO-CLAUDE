@@ -19,9 +19,12 @@ import java.util.List;
 /**
  * Drops de ingredientes por tier (CrystalDrops):
  *
- *  WEAK / COMMON / COMMON+  → 50%  de soltar 1 ingrediente aleatorio (1 unidad)
- *  UNCOMMON / RARE          → 75%  de soltar 2 ingredientes distintos aleatorios (2 de cada uno)
- *  LEGENDARY                → 100% suelta los 4 ingredientes (2 de cada uno)
+ *  WEAK      → 25%  de soltar 1 ingrediente aleatorio (x1)
+ *  COMMON    → 40%  de soltar 1 ingrediente aleatorio (x1)
+ *  COMMON+   → 60%  de soltar 1 ingrediente aleatorio (x1)
+ *  UNCOMMON  → 72%  de soltar 2 ingredientes distintos (x1 c/u)
+ *  RARE      → 85%  de soltar 2 ingredientes distintos (x2 c/u)
+ *  LEGENDARY → 92%  de soltar 3 ingredientes distintos aleatorios (x2 c/u)
  */
 @Mod.EventBusSubscriber(modid = GranizadosMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEvents {
@@ -62,27 +65,52 @@ public class ModEvents {
 
         switch (tier) {
 
-            // ── WEAK / COMMON / COMMON+: 50% → 1 ingrediente aleatorio (x1) ──
-            case "WEAK", "COMMON", "COMMON+" -> {
-                if (rng.nextFloat() < 0.50f) {
-                    Item ingredient = pickRandom(getAllIngredients(), rng);
-                    spawnDrop(event, entity, ingredient, 1);
+            // ── WEAK: 25% → 1 ingrediente aleatorio (x1) ────────────────────
+            case "WEAK" -> {
+                if (rng.nextFloat() < 0.25f) {
+                    spawnDrop(event, entity, pickRandom(getAllIngredients(), rng), 1);
                 }
             }
 
-            // ── UNCOMMON / RARE: 75% → 2 ingredientes distintos (x2 c/u) ─────
-            case "UNCOMMON", "RARE" -> {
-                if (rng.nextFloat() < 0.75f) {
-                    List<Item> shuffled = shuffled(getAllIngredients(), rng);
-                    spawnDrop(event, entity, shuffled.get(0), 2);
-                    spawnDrop(event, entity, shuffled.get(1), 2);
+            // ── COMMON: 40% → 1 ingrediente aleatorio (x1) ──────────────────
+            case "COMMON" -> {
+                if (rng.nextFloat() < 0.40f) {
+                    spawnDrop(event, entity, pickRandom(getAllIngredients(), rng), 1);
                 }
             }
 
-            // ── LEGENDARY: 100% → los 4 ingredientes (x2 c/u) ───────────────
+            // ── COMMON+: 60% → 1 ingrediente aleatorio (x1) ─────────────────
+            case "COMMON+" -> {
+                if (rng.nextFloat() < 0.60f) {
+                    spawnDrop(event, entity, pickRandom(getAllIngredients(), rng), 1);
+                }
+            }
+
+            // ── UNCOMMON: 72% → 2 ingredientes distintos (x1 c/u) ───────────
+            case "UNCOMMON" -> {
+                if (rng.nextFloat() < 0.72f) {
+                    List<Item> s = shuffled(getAllIngredients(), rng);
+                    spawnDrop(event, entity, s.get(0), 1);
+                    spawnDrop(event, entity, s.get(1), 1);
+                }
+            }
+
+            // ── RARE: 85% → 2 ingredientes distintos (x2 c/u) ───────────────
+            case "RARE" -> {
+                if (rng.nextFloat() < 0.85f) {
+                    List<Item> s = shuffled(getAllIngredients(), rng);
+                    spawnDrop(event, entity, s.get(0), 2);
+                    spawnDrop(event, entity, s.get(1), 2);
+                }
+            }
+
+            // ── LEGENDARY: 92% → 3 ingredientes distintos aleatorios (x2 c/u)
             case "LEGENDARY" -> {
-                for (Item ingredient : getAllIngredients()) {
-                    spawnDrop(event, entity, ingredient, 2);
+                if (rng.nextFloat() < 0.92f) {
+                    List<Item> s = shuffled(getAllIngredients(), rng);
+                    spawnDrop(event, entity, s.get(0), 2);
+                    spawnDrop(event, entity, s.get(1), 2);
+                    spawnDrop(event, entity, s.get(2), 2);
                 }
             }
         }
@@ -93,18 +121,27 @@ public class ModEvents {
     public static List<Item> simulateDrop(String tier, RandomSource rng) {
         List<Item> result = new ArrayList<>();
         switch (tier) {
-            case "WEAK", "COMMON", "COMMON+" -> {
-                if (rng.nextFloat() < 0.50f)
-                    result.add(pickRandom(getAllIngredients(), rng));
-            }
-            case "UNCOMMON", "RARE" -> {
-                if (rng.nextFloat() < 0.75f) {
+            case "WEAK" -> { if (rng.nextFloat() < 0.25f) result.add(pickRandom(getAllIngredients(), rng)); }
+            case "COMMON" -> { if (rng.nextFloat() < 0.40f) result.add(pickRandom(getAllIngredients(), rng)); }
+            case "COMMON+" -> { if (rng.nextFloat() < 0.60f) result.add(pickRandom(getAllIngredients(), rng)); }
+            case "UNCOMMON" -> {
+                if (rng.nextFloat() < 0.72f) {
                     List<Item> s = shuffled(getAllIngredients(), rng);
-                    result.add(s.get(0));
-                    result.add(s.get(1));
+                    result.add(s.get(0)); result.add(s.get(1));
                 }
             }
-            case "LEGENDARY" -> result.addAll(getAllIngredients());
+            case "RARE" -> {
+                if (rng.nextFloat() < 0.85f) {
+                    List<Item> s = shuffled(getAllIngredients(), rng);
+                    result.add(s.get(0)); result.add(s.get(1));
+                }
+            }
+            case "LEGENDARY" -> {
+                if (rng.nextFloat() < 0.92f) {
+                    List<Item> s = shuffled(getAllIngredients(), rng);
+                    result.add(s.get(0)); result.add(s.get(1)); result.add(s.get(2));
+                }
+            }
         }
         return result;
     }
