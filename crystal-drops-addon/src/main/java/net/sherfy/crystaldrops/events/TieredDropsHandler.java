@@ -34,6 +34,7 @@ public class TieredDropsHandler {
 
         // ── 2. Spawn tiered item drops ───────────────────────────────────
         List<ItemStack> drops = MobLootTable.getDrops(entity, difficulty);
+        drops.addAll(MobLootTable.getSummonScrollDrops(difficulty));
         for (ItemStack stack : drops) {
             if (!stack.isEmpty()) {
                 entity.spawnAtLocation(stack);

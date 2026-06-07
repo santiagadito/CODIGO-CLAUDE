@@ -1,6 +1,5 @@
 package net.sherfy.crystaldrops.init;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,9 +8,8 @@ import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.monster.piglin.PiglinBrute;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.alchemy.Potions;
+import net.sherfy.crystaldrops.init.CrystalDropsItems;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -220,6 +218,28 @@ public class MobLootTable {
             if (RNG.nextFloat() < 0.4f) drops.add(new ItemStack(Items.ENDER_PEARL, 1));
         }
 
+        return drops;
+    }
+
+    // ── Summon Scroll drop ────────────────────────────────────────────────
+
+    /**
+     * Mobs with difficulty >= 60 have a linearly scaling chance to drop Summon Scrolls.
+     *
+     * Probability : 5% at level 60 → 25% at level 100  (linear)
+     * Quantity    : 1 scroll at level 60 → 3 scrolls at level 100 (scaled)
+     */
+    public static List<ItemStack> getSummonScrollDrops(double difficulty) {
+        List<ItemStack> drops = new ArrayList<>();
+        if (difficulty < 60) return drops;
+
+        // probability: 0.05 + 0.20 * ((difficulty - 60) / 40)
+        double chance = 0.05 + 0.20 * ((difficulty - 60.0) / 40.0);
+        if (RNG.nextDouble() >= chance) return drops;
+
+        // quantity: 1 at 60, 3 at 100
+        int qty = 1 + (int) Math.round(2.0 * ((difficulty - 60.0) / 40.0));
+        drops.add(new ItemStack(CrystalDropsItems.SUMMON_SCROLL.get(), qty));
         return drops;
     }
 
