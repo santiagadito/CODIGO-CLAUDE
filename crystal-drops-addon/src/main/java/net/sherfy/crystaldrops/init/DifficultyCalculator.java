@@ -29,16 +29,17 @@ public class DifficultyCalculator {
 
     private static final Random RNG = new Random();
 
-    private static final double OVERWORLD_LAMBDA_COMPAT = 10.0;
-    private static final double NETHER_LAMBDA_COMPAT    = 16.0;
-    private static final double END_LAMBDA_COMPAT       = 22.0;
+    // Steeper than before: legendary mobs should be a genuinely rare event.
+    private static final double OVERWORLD_LAMBDA_COMPAT = 7.0;
+    private static final double NETHER_LAMBDA_COMPAT    = 10.0;
+    private static final double END_LAMBDA_COMPAT       = 14.0;
 
-    private static final double OVERWORLD_LAMBDA_SOLO   = 14.0;
-    private static final double NETHER_LAMBDA_SOLO      = 22.0;
-    private static final double END_LAMBDA_SOLO         = 30.0;
+    private static final double OVERWORLD_LAMBDA_SOLO   = 10.0;
+    private static final double NETHER_LAMBDA_SOLO      = 14.0;
+    private static final double END_LAMBDA_SOLO         = 18.0;
 
-    private static final double DISTANCE_LAMBDA_REDUCTION_PER_500 = 2.0;
-    private static final double MIN_OVERWORLD_LAMBDA               = 6.0;
+    private static final double DISTANCE_LAMBDA_REDUCTION_PER_500 = 1.5;
+    private static final double MIN_OVERWORLD_LAMBDA               = 5.0;
 
     private static final int MAX_ATTEMPTS = 200;
 
@@ -58,6 +59,10 @@ public class DifficultyCalculator {
             double reduction = distanceLambdaReduction(entity);
             lambda           = Math.max(base - reduction, MIN_OVERWORLD_LAMBDA);
         }
+
+        // Global difficulty knob: a higher multiplier flattens the curve,
+        // letting tougher mobs appear more often (and vice-versa).
+        lambda *= ServerDifficulty.getMultiplier();
 
         return exponentialSample(lambda);
     }
