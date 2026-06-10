@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DDD",
+    "DND",
+    "DSD"
+  ],
+  "key": {
+    "D": { "item": "minecraft:diamond_block" },
+    "N": { "item": "minecraft:netherite_block" },
+    "S": { "item": "minecraft:nether_star" }
+  },
+  "result": {
+    "item": "crystaldrops:special_anvil",
+    "count": 1
+  }
+}

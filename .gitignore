@@ -1,2 +1,5 @@
 mod-workspace/
 dangerous-forge-inspect/
+
+crystal-drops-addon/build/
+crystal-drops-addon/.gradle/

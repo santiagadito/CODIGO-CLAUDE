@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "crystaldrops:block/special_anvil" },
+    "facing=east":  { "model": "crystaldrops:block/special_anvil", "y": 90 },
+    "facing=south": { "model": "crystaldrops:block/special_anvil", "y": 180 },
+    "facing=west":  { "model": "crystaldrops:block/special_anvil", "y": 270 }
+  }
+}

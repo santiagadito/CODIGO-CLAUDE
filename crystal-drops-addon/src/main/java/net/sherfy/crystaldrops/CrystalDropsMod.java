@@ -3,6 +3,7 @@ package net.sherfy.crystaldrops;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.sherfy.crystaldrops.init.CrystalDropsBlocks;
 import net.sherfy.crystaldrops.init.CrystalDropsItems;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,8 @@ public class CrystalDropsMod {
     public CrystalDropsMod() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         CrystalDropsItems.REGISTRY.register(modBus);
+        CrystalDropsBlocks.BLOCKS.register(modBus);
+        CrystalDropsBlocks.BLOCK_ITEMS.register(modBus);
         LOGGER.info("Crystal Drops Addon initialized.");
     }
 }

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/template_anvil",
+  "textures": {
+    "particle": "crystaldrops:block/special_anvil",
+    "body": "crystaldrops:block/special_anvil",
+    "top": "crystaldrops:block/special_anvil_top"
+  }
+}
