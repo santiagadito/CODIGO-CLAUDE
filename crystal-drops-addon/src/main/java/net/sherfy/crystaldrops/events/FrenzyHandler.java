@@ -35,6 +35,7 @@ public class FrenzyHandler {
         if (entity instanceof Player) return;
         if (!(entity instanceof Monster)) return;
         if (entity.level().isClientSide()) return;
+        if (!net.sherfy.crystaldrops.nirvana.CrystalState.isAwakened()) return;
 
         double difficulty = getDifficulty(entity);
         if (difficulty < FRENZY_THRESHOLD) return;
@@ -72,6 +73,7 @@ public class FrenzyHandler {
 
         if (entity instanceof Player) return;
         if (entity.level().isClientSide()) return;
+        if (!net.sherfy.crystaldrops.nirvana.CrystalState.isAwakened()) return;
 
         double difficulty = getDifficulty(entity);
         if (difficulty < 81) return;
@@ -94,6 +96,7 @@ public class FrenzyHandler {
 
         if (entity instanceof Player) return;
         if (entity.level().isClientSide()) return;
+        if (!net.sherfy.crystaldrops.nirvana.CrystalState.isAwakened()) return;
         if (entity.tickCount % PARTICLE_INTERVAL != 0) return;
 
         double difficulty = getDifficulty(entity);

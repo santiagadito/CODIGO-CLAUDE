@@ -1,0 +1,16 @@
+{
+  "parent": "crystaldrops:cannabis/poblado",
+  "display": {
+    "icon": { "item": "minecraft:emerald" },
+    "title": "Barrio Antioquia",
+    "description": "Convierte a un aldeano con profesión en tu Dealer de confianza",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "earned": { "trigger": "minecraft:impossible" }
+  },
+  "requirements": [["earned"]]
+}

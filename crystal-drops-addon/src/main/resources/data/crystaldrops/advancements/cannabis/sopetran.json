@@ -1,0 +1,16 @@
+{
+  "parent": "crystaldrops:cannabis/poblado",
+  "display": {
+    "icon": { "item": "minecraft:glass_bottle" },
+    "title": "Sopetrán",
+    "description": "Fuma de un bong",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "earned": { "trigger": "minecraft:impossible" }
+  },
+  "requirements": [["earned"]]
+}

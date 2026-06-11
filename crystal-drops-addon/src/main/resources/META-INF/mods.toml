@@ -32,3 +32,10 @@ Enemies with higher difficulty_level drop better loot on death.
     versionRange="[1.0,)"
     ordering="AFTER"
     side="BOTH"
+
+[[dependencies.crystaldrops]]
+    modId="nirvana"
+    mandatory=false
+    versionRange="*"
+    ordering="AFTER"
+    side="BOTH"

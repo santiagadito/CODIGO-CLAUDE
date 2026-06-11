@@ -1,0 +1,16 @@
+{
+  "parent": "crystaldrops:cannabis/santa_elena",
+  "display": {
+    "icon": { "item": "minecraft:dried_kelp" },
+    "title": "Poblado",
+    "description": "Fuma marihuana por primera vez (en cualquier forma)",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "earned": { "trigger": "minecraft:impossible" }
+  },
+  "requirements": [["earned"]]
+}

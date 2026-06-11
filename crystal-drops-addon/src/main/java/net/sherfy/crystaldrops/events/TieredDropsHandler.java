@@ -28,6 +28,8 @@ public class TieredDropsHandler {
         if (entity instanceof Player) return;
         // Server-side only
         if (level.isClientSide()) return;
+        // Crystal stays dormant until the first cannabis achievement (#5)
+        if (!net.sherfy.crystaldrops.nirvana.CrystalState.isAwakened()) return;
 
         // ── 1. Resolve difficulty_level ──────────────────────────────────
         double difficulty = resolveDifficulty(entity);

@@ -44,6 +44,8 @@ public class DifficultyCalculator {
     private static final int MAX_ATTEMPTS = 200;
 
     public static double roll(LivingEntity entity) {
+        // Crystal stays dormant until the first cannabis achievement (#5).
+        if (!net.sherfy.crystaldrops.nirvana.CrystalState.isAwakened()) return 0;
         if (isPassive(entity)) return 0;
 
         ResourceKey<Level> dim = entity.level().dimension();

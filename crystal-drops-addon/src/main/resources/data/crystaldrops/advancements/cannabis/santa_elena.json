@@ -1,0 +1,16 @@
+{
+  "parent": "crystaldrops:cannabis/la_finca",
+  "display": {
+    "icon": { "item": "minecraft:wheat" },
+    "title": "Santa Elena",
+    "description": "Siembra tu primera semilla de cannabis",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "earned": { "trigger": "minecraft:impossible" }
+  },
+  "requirements": [["earned"]]
+}

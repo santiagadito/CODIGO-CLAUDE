@@ -50,6 +50,7 @@ public class StatScalingHandler {
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide()) return;
+        if (!net.sherfy.crystaldrops.nirvana.CrystalState.isAwakened()) return; // dormant
         if (!(event.getEntity() instanceof LivingEntity living)) return;
         if (!(living instanceof Monster)) return;
 

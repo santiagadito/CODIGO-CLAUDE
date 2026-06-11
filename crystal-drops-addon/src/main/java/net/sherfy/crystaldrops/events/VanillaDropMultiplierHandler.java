@@ -32,6 +32,7 @@ public class VanillaDropMultiplierHandler {
         LivingEntity entity = event.getEntity();
         if (entity instanceof Player) return;
         if (entity.level().isClientSide()) return;
+        if (!net.sherfy.crystaldrops.nirvana.CrystalState.isAwakened()) return; // dormant
 
         double difficulty = getDifficulty(entity);
         if (difficulty <= 0) return;

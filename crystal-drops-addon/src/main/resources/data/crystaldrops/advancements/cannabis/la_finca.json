@@ -1,0 +1,16 @@
+{
+  "display": {
+    "icon": { "item": "minecraft:wheat_seeds" },
+    "title": "LA FINCA",
+    "description": "Encuentra tu primera semilla de marihuana en un cofre",
+    "frame": "task",
+    "background": "minecraft:textures/block/moss_block.png",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "earned": { "trigger": "minecraft:impossible" }
+  },
+  "requirements": [["earned"]]
+}
